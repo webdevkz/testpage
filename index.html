@@ -31,14 +31,12 @@
     --typography-letter-spacing-label-medium: 0.25px;
   }
 
-  /* Page scaffold (для демо) */
   html,body{height:100%}
   body{
     margin:0; background:#F4F5F7; display:flex; flex-direction:column;
     align-items:center; justify-content:center; gap:24px; font-family:var(--typography-family-headline);
   }
 
-  /* Demo control buttons — очевидные */
   .demo-controls{ display:flex; gap:12px; }
   .demo-controls button{
     padding:12px 20px; border-radius:10px; border:0;
@@ -47,7 +45,6 @@
   }
   .demo-controls button:hover{ background:#005ec2; }
 
-  /* Backdrop */
   .backdrop{
     position:fixed; inset:0; display:none;
     align-items:center; justify-content:center;
@@ -55,7 +52,6 @@
   }
   .backdrop.is-open{ display:flex; }
 
-  /* Modal (адаптивный, как раньше) */
   .modal{
     position:relative;
     display:flex; flex-direction:column; gap:24px;
@@ -65,15 +61,13 @@
     box-shadow: var(--shadow-lg);
     max-width: 720px;
     width: min(92vw, 720px);
-    padding: 32px 32px 64px; /* нижний паддинг увеличен, чтобы футнот не лип к кнопкам */
+    padding: 32px 32px 64px;
   }
-  /* Немного уже для обоих окон */
   .modal.narrow{
     max-width: 560px;
     width: min(92vw, 560px);
   }
 
-  /* Заголовок и текст */
   .modal h2{
     margin:0;
     font-family: var(--typography-family-headline);
@@ -90,10 +84,8 @@
     gap: var(--vertical-between-text); align-self:stretch; text-align:left;
   }
 
-  /* Кнопки действий */
   .actions{ display:flex; gap:12px; margin-top:8px; }
 
-  /* To Dukascopy Europe (красная) */
   .btn-red{
     display:flex; min-width:72px; min-height:48px; padding:0 24px;
     justify-content:center; align-items:center; gap:8px;
@@ -108,7 +100,6 @@
     border:none; cursor:pointer;
   }
 
-  /* Continue (outline) */
   .btn-outline{
     display:flex; min-width:72px; min-height:48px; padding:0 24px;
     justify-content:center; align-items:center; gap:8px;
@@ -124,7 +115,6 @@
     cursor:pointer;
   }
 
-  /* See details + tooltip */
   .footnote{
     position:absolute; left:16px; bottom:14px;
     display:flex; align-items:center; gap:6px;
@@ -153,27 +143,24 @@
 </head>
 <body>
 
-  <!-- Кнопки для открытия конкретного модала -->
-  <div class="demo-controls" aria-hidden="true">
-    <button onclick="openModal('force')">Open: Redirected</button>
-    <button onclick="openModal('optional')">Open: Optional</button>
-  </div>
+<div class="demo-controls" aria-hidden="true">
+  <button onclick="openModal('force')">Open: Redirected</button>
+  <button onclick="openModal('optional')">Open: Optional</button>
+</div>
 
-  <!-- Контейнер модала -->
-  <div id="backdrop" class="backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title"></div>
+<div id="backdrop" class="backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title"></div>
 
 <script>
-  // Шаблоны двух модальных окон (оба с классом .narrow)
   const templates = {
     force: `
       <div class="modal narrow">
         <h2 id="modal-title">You’ve been redirected to Dukascopy Europe website</h2>
         <div class="stack">
-          <p>You are using IP address of [EEA] country, therefore you have been transferred to Dukascopy Europe webpage which is EU licensed subsidiary of Dukascopy Bank.</p>
+          <p>You are using IP address of [EEA country], therefore you have been transferred to Dukascopy Europe webpage which is EU licensed subsidiary of Dukascopy Bank.</p>
         </div>
 
         <div class="actions">
-          <button class="btn-outline" onclick="/* TODO: link to CH site */ closeModal()">Continue</button>
+          <button class="btn-outline" onclick="closeModal()">Continue</button>
         </div>
 
         <div class="footnote" tabindex="0">
@@ -189,13 +176,13 @@
       <div class="modal narrow">
         <h2 id="modal-title">Continue with Dukascopy Europe?</h2>
         <div class="stack">
-          <p>It seems that you are located in [EEA country] and are about to access our website for Switzerland. We recommend visiting the Dukascopy Europe webpage — our EU-licensed subsidiary of Dukascopy Bank.</p>
-          <p>By clicking "Continue", you confirm that you have read the legal information and are accessing the website of Dukascopy Bank SA on your own initiative, without any solicitation from Dukascopy Bank SA.</p>
+          <p>It seems that you are located in [EEA country] and are about to access our website for Switzerland. As you are located in the EEA, we recommend visiting the Dukascopy Europe webpage — our EU-licensed subsidiary of Dukascopy Bank.</p>
+          <p>By clicking "Continue", you confirm that you are proceeding to the website of Dukascopy Bank SA on your own initiative, without any solicitation from Dukascopy Bank SA.</p>
         </div>
 
         <div class="actions">
-          <button class="btn-outline" onclick="/* TODO: link to CH site */ closeModal()">Continue</button>
-          <button class="btn-red" onclick="/* TODO: link to EU site */ closeModal()">To Dukascopy Europe</button>
+          <button class="btn-outline" onclick="closeModal()">Continue</button>
+          <button class="btn-red" onclick="closeModal()">To Dukascopy Europe</button>
         </div>
 
         <div class="footnote" tabindex="0">
@@ -214,7 +201,6 @@
   function openModal(kind){
     backdrop.innerHTML = templates[kind] || '';
     backdrop.classList.add('is-open');
-    // Фокус на первую кнопку для UX
     queueMicrotask(()=>backdrop.querySelector('.btn-outline,.btn-red')?.focus());
   }
 
@@ -223,12 +209,8 @@
     backdrop.innerHTML = '';
   }
 
-  // Закрытие по ESC и клику по фону
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
   backdrop.addEventListener('click', e=>{ if(e.target===backdrop) closeModal(); });
-
-  // Для быстрой проверки раскомментируй:
-  // openModal('force');
 </script>
 </body>
 </html>
