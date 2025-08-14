@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dukascopy Modals – Narrow + Spaced Footnote</title>
+<title>Dukascopy Modals – Auto Country</title>
 <style>
   :root{
     --vertical-between-text: 8px;
-
     --content-neutral-content-primary: #11141A;
     --surface-elevated: #FFFFFF;
     --surface-backdrop: rgba(17,20,26,.45);
@@ -37,10 +36,11 @@
     align-items:center; justify-content:center; gap:24px; font-family:var(--typography-family-headline);
   }
 
-  .demo-controls{ display:flex; gap:12px; }
+  .demo-controls{ display:flex; flex-direction:column; gap:12px; }
   .demo-controls button{
     padding:12px 20px; border-radius:10px; border:0;
     background:#0070f3; color:#fff; font-weight:700;
+    text-align:left;
     cursor:pointer; transition:background .2s;
   }
   .demo-controls button:hover{ background:#005ec2; }
@@ -144,19 +144,27 @@
 <body>
 
 <div class="demo-controls" aria-hidden="true">
-  <button onclick="openModal('force')">Open: Redirected</button>
-  <button onclick="openModal('optional')">Open: Optional</button>
+  <button onclick="openModal('force')">Case 1 – Force redirect – Клиент из ЕЭЗ перешёл на швейцарский сайт по ссылке БИ из ЕЭЗ</button>
+  <button onclick="openModal('optional')">Case 2 – Optional redirect – Клиент из ЕЭЗ перешёл на швейцарский сайт по ссылке БИ зарегистрированного вне ЕЭЗ</button>
 </div>
 
 <div id="backdrop" class="backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title"></div>
 
 <script>
+  let userCountry = '[EEA country]';
+
+  // Получаем страну по IP
+  fetch('https://ipapi.co/country_name/')
+    .then(res => res.text())
+    .then(country => { if (country) userCountry = country; })
+    .catch(() => {});
+
   const templates = {
     force: `
       <div class="modal narrow">
         <h2 id="modal-title">You’ve been redirected to Dukascopy Europe website</h2>
         <div class="stack">
-          <p>You are using IP address of [EEA country], therefore you have been transferred to Dukascopy Europe webpage which is EU licensed subsidiary of Dukascopy Bank.</p>
+          <p>You are using IP address of ${userCountry}, therefore you have been transferred to Dukascopy Europe webpage which is EU licensed subsidiary of Dukascopy Bank.</p>
         </div>
 
         <div class="actions">
@@ -176,7 +184,7 @@
       <div class="modal narrow">
         <h2 id="modal-title">Continue with Dukascopy Europe?</h2>
         <div class="stack">
-          <p>It seems that you are located in [EEA country] and are about to access our website for Switzerland. As you are located in the EEA, we recommend visiting the Dukascopy Europe webpage — our EU-licensed subsidiary of Dukascopy Bank.</p>
+          <p>It seems that you are located in ${userCountry} and are about to access our website for Switzerland. As you are located in the EEA, we recommend visiting the Dukascopy Europe webpage — our EU-licensed subsidiary of Dukascopy Bank.</p>
           <p>By clicking "Continue", you confirm that you are proceeding to the website of Dukascopy Bank SA on your own initiative, without any solicitation from Dukascopy Bank SA.</p>
         </div>
 
