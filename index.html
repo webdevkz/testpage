@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dukascopy Modals – Narrow + Spaced Footnote</title>
+<style>
+  :root{
+    --vertical-between-text: 8px;
+
+    --content-neutral-content-primary: #11141A;
+    --surface-elevated: #FFFFFF;
+    --surface-backdrop: rgba(17,20,26,.45);
+
+    --radius-xl: 16px;
+    --shadow-lg: 0 10px 30px rgba(0,0,0,.15);
+
+    --background-accent-background-accent-red: #D92626;
+    --content-neutral-oncolor-content-oncolor-white: #FFF;
+    --border-neutral-border-strong: #C8CEDB;
+
+    --typography-family-headline: "Season Sans TRIAL","Montserrat",system-ui,sans-serif;
+    --typography-size-headline-small: 24px;
+    --typography-weight-semibold: 700;
+    --typography-line-height-headline-small: 32px;
+
+    --typography-family-label: "Season Sans TRIAL",system-ui,sans-serif;
+    --typography-size-label-medium: 16px;
+    --typography-weight-label-semibold: 650;
+    --typography-line-height-label-medium: 20px;
+    --typography-letter-spacing-label-medium: 0.25px;
+  }
+
+  /* Page scaffold (для демо) */
+  html,body{height:100%}
+  body{
+    margin:0; background:#F4F5F7; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:24px; font-family:var(--typography-family-headline);
+  }
+
+  /* Demo control buttons — очевидные */
+  .demo-controls{ display:flex; gap:12px; }
+  .demo-controls button{
+    padding:12px 20px; border-radius:10px; border:0;
+    background:#0070f3; color:#fff; font-weight:700;
+    cursor:pointer; transition:background .2s;
+  }
+  .demo-controls button:hover{ background:#005ec2; }
+
+  /* Backdrop */
+  .backdrop{
+    position:fixed; inset:0; display:none;
+    align-items:center; justify-content:center;
+    background:var(--surface-backdrop); z-index:1000;
+  }
+  .backdrop.is-open{ display:flex; }
+
+  /* Modal (адаптивный, как раньше) */
+  .modal{
+    position:relative;
+    display:flex; flex-direction:column; gap:24px;
+    background:var(--surface-elevated);
+    color:var(--content-neutral-content-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    max-width: 720px;
+    width: min(92vw, 720px);
+    padding: 32px 32px 64px; /* нижний паддинг увеличен, чтобы футнот не лип к кнопкам */
+  }
+  /* Немного уже для обоих окон */
+  .modal.narrow{
+    max-width: 560px;
+    width: min(92vw, 560px);
+  }
+
+  /* Заголовок и текст */
+  .modal h2{
+    margin:0;
+    font-family: var(--typography-family-headline);
+    font-size: var(--typography-size-headline-small);
+    font-weight: var(--typography-weight-semibold);
+    line-height: var(--typography-line-height-headline-small);
+    letter-spacing: 0;
+  }
+  .modal p{
+    margin:0; font-size:16px; line-height:24px;
+  }
+  .modal .stack{
+    display:flex; flex-direction:column; align-items:flex-start;
+    gap: var(--vertical-between-text); align-self:stretch; text-align:left;
+  }
+
+  /* Кнопки действий */
+  .actions{ display:flex; gap:12px; margin-top:8px; }
+
+  /* To Dukascopy Europe (красная) */
+  .btn-red{
+    display:flex; min-width:72px; min-height:48px; padding:0 24px;
+    justify-content:center; align-items:center; gap:8px;
+    border-radius:48px; background:var(--background-accent-background-accent-red);
+    color:var(--content-neutral-oncolor-content-oncolor-white);
+    font-family:var(--typography-family-label);
+    font-size:var(--typography-size-label-medium);
+    font-style:normal;
+    font-weight:var(--typography-weight-label-semibold);
+    line-height:var(--typography-line-height-label-medium);
+    letter-spacing:var(--typography-letter-spacing-label-medium);
+    border:none; cursor:pointer;
+  }
+
+  /* Continue (outline) */
+  .btn-outline{
+    display:flex; min-width:72px; min-height:48px; padding:0 24px;
+    justify-content:center; align-items:center; gap:8px;
+    border-radius:48px; background:transparent;
+    border:1px solid var(--border-neutral-border-strong);
+    color:var(--content-neutral-content-primary);
+    font-family:var(--typography-family-label);
+    font-size:var(--typography-size-label-medium);
+    font-style:normal;
+    font-weight:var(--typography-weight-label-semibold);
+    line-height:var(--typography-line-height-label-medium);
+    letter-spacing:var(--typography-letter-spacing-label-medium);
+    cursor:pointer;
+  }
+
+  /* See details + tooltip */
+  .footnote{
+    position:absolute; left:16px; bottom:14px;
+    display:flex; align-items:center; gap:6px;
+    font-size:12px; opacity:.8; cursor:default; user-select:none;
+  }
+  .footnote .info{
+    width:18px; height:18px; border-radius:50%;
+    border:1px solid #9aa3b2; display:inline-flex;
+    align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; color:#9aa3b2;
+  }
+  .tooltip{
+    position:absolute; left:16px; bottom:40px;
+    background:rgba(0,0,0,.85); color:#fff;
+    padding:10px 12px; border-radius:8px;
+    max-width:520px; font-size:12px; line-height:18px;
+    opacity:0; pointer-events:none;
+    transform:translateY(6px);
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .footnote:hover + .tooltip,
+  .footnote:focus-within + .tooltip{
+    opacity:1; transform:translateY(0);
+  }
+</style>
+</head>
+<body>
+
+  <!-- Кнопки для открытия конкретного модала -->
+  <div class="demo-controls" aria-hidden="true">
+    <button onclick="openModal('force')">Open: Redirected</button>
+    <button onclick="openModal('optional')">Open: Optional</button>
+  </div>
+
+  <!-- Контейнер модала -->
+  <div id="backdrop" class="backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title"></div>
+
+<script>
+  // Шаблоны двух модальных окон (оба с классом .narrow)
+  const templates = {
+    force: `
+      <div class="modal narrow">
+        <h2 id="modal-title">You’ve been redirected to Dukascopy Europe website</h2>
+        <div class="stack">
+          <p>You are using IP address of [EEA] country, therefore you have been transferred to Dukascopy Europe webpage which is EU licensed subsidiary of Dukascopy Bank.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn-outline" onclick="/* TODO: link to CH site */ closeModal()">Continue</button>
+        </div>
+
+        <div class="footnote" tabindex="0">
+          <span>See details</span><span class="info" aria-hidden="true">i</span>
+        </div>
+        <div class="tooltip" role="note">
+          Dukascopy Europe IBS AS is an EU licensed investment brokerage company based in Riga, Latvia,
+          regulated by the Bank of Latvia.
+        </div>
+      </div>
+    `,
+    optional: `
+      <div class="modal narrow">
+        <h2 id="modal-title">Continue with Dukascopy Europe?</h2>
+        <div class="stack">
+          <p>It seems that you are located in [EEA country] and are about to access our website for Switzerland. We recommend visiting the Dukascopy Europe webpage — our EU-licensed subsidiary of Dukascopy Bank.</p>
+          <p>By clicking "Continue", you confirm that you have read the legal information and are accessing the website of Dukascopy Bank SA on your own initiative, without any solicitation from Dukascopy Bank SA.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn-outline" onclick="/* TODO: link to CH site */ closeModal()">Continue</button>
+          <button class="btn-red" onclick="/* TODO: link to EU site */ closeModal()">To Dukascopy Europe</button>
+        </div>
+
+        <div class="footnote" tabindex="0">
+          <span>See details</span><span class="info" aria-hidden="true">i</span>
+        </div>
+        <div class="tooltip" role="note">
+          Dukascopy Europe IBS AS is an EU licensed investment brokerage company based in Riga, Latvia,
+          regulated by the Bank of Latvia.
+        </div>
+      </div>
+    `
+  };
+
+  const backdrop = document.getElementById('backdrop');
+
+  function openModal(kind){
+    backdrop.innerHTML = templates[kind] || '';
+    backdrop.classList.add('is-open');
+    // Фокус на первую кнопку для UX
+    queueMicrotask(()=>backdrop.querySelector('.btn-outline,.btn-red')?.focus());
+  }
+
+  function closeModal(){
+    backdrop.classList.remove('is-open');
+    backdrop.innerHTML = '';
+  }
+
+  // Закрытие по ESC и клику по фону
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  backdrop.addEventListener('click', e=>{ if(e.target===backdrop) closeModal(); });
+
+  // Для быстрой проверки раскомментируй:
+  // openModal('force');
+</script>
+</body>
+</html>
