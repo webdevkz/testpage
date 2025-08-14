@@ -36,11 +36,10 @@
     align-items:center; justify-content:center; gap:24px; font-family:var(--typography-family-headline);
   }
 
-  .demo-controls{ display:flex; flex-direction:column; gap:12px; }
+  .demo-controls{ display:flex; gap:12px; }
   .demo-controls button{
     padding:12px 20px; border-radius:10px; border:0;
     background:#0070f3; color:#fff; font-weight:700;
-    text-align:left;
     cursor:pointer; transition:background .2s;
   }
   .demo-controls button:hover{ background:#005ec2; }
@@ -144,8 +143,8 @@
 <body>
 
 <div class="demo-controls" aria-hidden="true">
-  <button onclick="openModal('force')">Case 1 – Force redirect – Клиент из ЕЭЗ перешёл на швейцарский сайт по ссылке БИ из ЕЭЗ</button>
-  <button onclick="openModal('optional')">Case 2 – Optional redirect – Клиент из ЕЭЗ перешёл на швейцарский сайт по ссылке БИ зарегистрированного вне ЕЭЗ</button>
+  <button onclick="openModal('force')">Case 1 – Force redirect</button>
+  <button onclick="openModal('optional')">Case 2 – Optional redirect</button>
 </div>
 
 <div id="backdrop" class="backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title"></div>
@@ -154,13 +153,17 @@
   let userCountry = '[EEA country]';
 
   // Получаем страну по IP
-  fetch('https://ipapi.co/country_name/')
-    .then(res => res.text())
-    .then(country => { if (country) userCountry = country; })
+  fetch('https://ipapi.co/json/')
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.country_name) {
+        userCountry = data.country_name;
+      }
+    })
     .catch(() => {});
 
   const templates = {
-    force: `
+    force: () => `
       <div class="modal narrow">
         <h2 id="modal-title">You’ve been redirected to Dukascopy Europe website</h2>
         <div class="stack">
@@ -180,7 +183,7 @@
         </div>
       </div>
     `,
-    optional: `
+    optional: () => `
       <div class="modal narrow">
         <h2 id="modal-title">Continue with Dukascopy Europe?</h2>
         <div class="stack">
@@ -207,7 +210,7 @@
   const backdrop = document.getElementById('backdrop');
 
   function openModal(kind){
-    backdrop.innerHTML = templates[kind] || '';
+    backdrop.innerHTML = templates[kind]();
     backdrop.classList.add('is-open');
     queueMicrotask(()=>backdrop.querySelector('.btn-outline,.btn-red')?.focus());
   }
