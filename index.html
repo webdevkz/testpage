@@ -14,8 +14,6 @@
     --radius-xl: 16px;
     --shadow-lg: 0 10px 30px rgba(0,0,0,.15);
 
-    --background-accent-background-accent-red: #D92626;
-    --content-neutral-oncolor-content-oncolor-white: #FFF;
     --border-neutral-border-strong: #C8CEDB;
 
     --typography-family-headline: "Season Sans TRIAL","Montserrat",system-ui,sans-serif;
@@ -85,20 +83,7 @@
 
   .actions{ display:flex; gap:12px; margin-top:8px; }
 
-  .btn-red{
-    display:flex; min-width:72px; min-height:48px; padding:0 24px;
-    justify-content:center; align-items:center; gap:8px;
-    border-radius:48px; background:var(--background-accent-background-accent-red);
-    color:var(--content-neutral-oncolor-content-oncolor-white);
-    font-family:var(--typography-family-label);
-    font-size:var(--typography-size-label-medium);
-    font-style:normal;
-    font-weight:var(--typography-weight-label-semibold);
-    line-height:var(--typography-line-height-label-medium);
-    letter-spacing:var(--typography-letter-spacing-label-medium);
-    border:none; cursor:pointer;
-  }
-
+  /* Outline кнопка */
   .btn-outline{
     display:flex; min-width:72px; min-height:48px; padding:0 24px;
     justify-content:center; align-items:center; gap:8px;
@@ -152,7 +137,6 @@
 <script>
   let userCountry = '[EEA country]';
 
-  // Получаем страну по IP
   fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
@@ -193,7 +177,7 @@
 
         <div class="actions">
           <button class="btn-outline" onclick="closeModal()">Continue</button>
-          <button class="btn-red" onclick="closeModal()">To Dukascopy Europe</button>
+          <button class="btn-outline" onclick="closeModal()">To Dukascopy Europe</button>
         </div>
 
         <div class="footnote" tabindex="0">
@@ -212,7 +196,7 @@
   function openModal(kind){
     backdrop.innerHTML = templates[kind]();
     backdrop.classList.add('is-open');
-    queueMicrotask(()=>backdrop.querySelector('.btn-outline,.btn-red')?.focus());
+    queueMicrotask(()=>backdrop.querySelector('.btn-outline')?.focus());
   }
 
   function closeModal(){
